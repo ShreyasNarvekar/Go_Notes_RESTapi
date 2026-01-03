@@ -15,14 +15,14 @@ func NewNoteService() NoteService { //Here we are returning the interface NoteSe
 	}
 }
 
-func (s *noteService) Create(note models.Note) models.Note {
+func (s *noteService) Create(note models.Note) (models.Note, error) {
 	note.ID = len(s.notes) + 1
 	s.notes = append(s.notes, note)
-	return note // is this correct?
+	return note, nil
 }
 
-func (s *noteService) GetAll() []models.Note {
-	return s.notes
+func (s *noteService) GetAll() ([]models.Note, error) {
+	return s.notes, nil
 }
 
 func (s *noteService) GetByID(id int) (*models.Note, error) {

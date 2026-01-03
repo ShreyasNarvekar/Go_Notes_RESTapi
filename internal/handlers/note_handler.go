@@ -26,13 +26,24 @@ func (h *NoteHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	created := h.service.Create(note)
+	created, err := h.service.Create(note)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
 	return c.JSON(created)
 }
 
 // GET ALL
 func (h *NoteHandler) GetAll(c *fiber.Ctx) error {
-	return c.JSON(h.service.GetAll())
+	notes, err := h.service.GetAll()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(notes)
 }
 
 // GET BY ID
