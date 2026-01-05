@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-notes-service/internal/handlers"
+	"go-notes-service/internal/repository"
 	"go-notes-service/internal/services"
 	"log"
 
@@ -10,8 +11,9 @@ import (
 
 func main() {
 	app := fiber.New()
-
-	noteService := services.NewNoteService() //Memory based note service
+	
+	noteRepository := repository.NewNoteRepository()
+	noteService := services.NewNoteService(noteRepository) //Memory based note service
 	noteHandler := handlers.NewNoteHandler(noteService)
 
 	app.Get("/", func(c *fiber.Ctx) error {
