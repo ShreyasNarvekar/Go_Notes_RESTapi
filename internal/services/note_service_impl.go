@@ -16,7 +16,10 @@ func NewNoteService(repo repository.NoteRepository) NoteService { //Here we are 
 }
 
 func (s *noteService) Create(note models.Note) (models.Note, error) {
-	s.repo.Create(&note)
+
+	if err := s.repo.Create(&note); err != nil {
+		return models.Note{}, err
+	}
 	return note, nil
 }
 
@@ -36,7 +39,9 @@ func (s *noteService) Update(id int, updated models.Note) (*models.Note, error) 
 	}
 	note.Title = updated.Title
 	note.Content = updated.Content
-	s.repo.Update(note)
+	if err := s.repo.Update(note); err != nil {
+		return nil, err
+	}
 	return note, nil
 }
 

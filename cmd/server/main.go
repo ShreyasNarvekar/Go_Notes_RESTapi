@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-notes-service/internal/db"
 	"go-notes-service/internal/handlers"
 	"go-notes-service/internal/repository"
 	"go-notes-service/internal/services"
@@ -11,7 +12,9 @@ import (
 
 func main() {
 	app := fiber.New()
-	
+
+	//We need to connect to DB here
+	db.Connect() //connect to the database
 	noteRepository := repository.NewNoteRepository()
 	noteService := services.NewNoteService(noteRepository) //Memory based note service
 	noteHandler := handlers.NewNoteHandler(noteService)
