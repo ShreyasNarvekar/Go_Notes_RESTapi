@@ -1,0 +1,29 @@
+// let me summarize the whole project
+/*
+we are creating one golang based REST api project for the note taking application where we are performing rest call like POST GET PUT DELETE notes
+
+1.Models
+here we have created models package where we are going to create the structure of any entity we are going to create as of now notes
+for Example:
+type Note struct {
+	ID      int    `json:"id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+2.Handlers
+here we are creating handlers for each entity(notes) where we are going to write the logic for handling the rest calls for each entity
+and we are going to call the service layer and its function from the handlers to perform the business logic for each rest call
+so for that we are using dependency injection to inject the service layer into the handlers layer and we are going to call the service layer from the handlers layer to perform the business logic for each rest call
+we are creating NoteHandler struct which has service field of type NoteService
+
+
+
+
+
+
+
+
+
+
+*/
