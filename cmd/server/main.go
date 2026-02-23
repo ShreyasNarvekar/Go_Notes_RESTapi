@@ -33,5 +33,14 @@ func main() {
 	app.Put("/notes/:id", noteHandler.Update)
 	app.Delete("/notes/:id", noteHandler.Delete)
 
+	taskRepository := repository.NewTaskRepository()
+	taskService := services.NewTaskService(taskRepository)
+	taskHandler := handlers.NewTaskHandler(taskService)
+	app.Get("/tasks", taskHandler.GetAll)
+	app.Get("/tasks/:id", taskHandler.GetByID)
+	app.Post("/tasks", taskHandler.Create)
+	app.Put("/tasks/:id", taskHandler.UpdateTask)
+	app.Delete("/tasks/:id", taskHandler.Delete)
+
 	log.Fatal(app.Listen(":8080"))
 }

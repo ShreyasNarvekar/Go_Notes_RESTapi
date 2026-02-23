@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.10
-	gorm.io/gorm v1.25.10
+	gorm.io/gorm v1.30.0
 )
 
 require (
