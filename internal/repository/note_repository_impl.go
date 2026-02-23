@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"go-notes-service/internal/db"
 	"go-notes-service/internal/models"
 
 	"gorm.io/gorm"
@@ -11,9 +10,10 @@ type noteRepo struct {
 	db *gorm.DB
 }
 
-func NewNoteRepository() NoteRepository {
+// as per main.go file we are passing the database connection to the repository, so we need to create a constructor function for the note repository that takes the database connection as a parameter and returns a new instance of the note repository. we can do this by adding the following code in the note_repository_impl.go file:
+func NewNoteRepository(db *gorm.DB) NoteRepository {
 	return &noteRepo{
-		db: db.DB,
+		db: db,
 	}
 }
 

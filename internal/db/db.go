@@ -9,13 +9,14 @@ import (
 
 var DB *gorm.DB
 
-func Connect() {
+func Connect() error {
 	dsn := "host=localhost user=postgres password=admin dbname=notesdb port=5432 sslmode=disable"
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("Failed to connect to database!")
+		return fmt.Errorf("Failed to connect to database: %w", err)
 	}
 
 	DB = database
 	fmt.Println("Database connected")
+	return nil
 }
