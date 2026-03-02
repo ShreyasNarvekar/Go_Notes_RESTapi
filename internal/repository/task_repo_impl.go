@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"go-notes-service/internal/db"
 	"go-notes-service/internal/models"
 
 	"gorm.io/gorm"
@@ -11,9 +10,9 @@ type taskRepository struct {
 	db *gorm.DB
 }
 
-func NewTaskRepository() TaskRepository {
+func NewTaskRepository(db *gorm.DB) TaskRepository {
 	return &taskRepository{
-		db: db.DB,
+		db: db,
 	}
 }
 

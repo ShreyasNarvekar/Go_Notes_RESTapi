@@ -8,16 +8,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type NoteHandler struct {
+type noteHandler struct {
 	service services.NoteService
 }
 
-func NewNoteHandler(service services.NoteService) *NoteHandler {
-	return &NoteHandler{service: service}
+func NewNoteHandler(service services.NoteService) NoteHandler {
+	return &noteHandler{service: service}
 }
 
 // CREATE
-func (h *NoteHandler) Create(c *fiber.Ctx) error {
+func (h *noteHandler) Create(c *fiber.Ctx) error {
 	var note models.Note
 
 	if err := c.BodyParser(&note); err != nil {
@@ -36,7 +36,7 @@ func (h *NoteHandler) Create(c *fiber.Ctx) error {
 }
 
 // GET ALL
-func (h *NoteHandler) GetAll(c *fiber.Ctx) error {
+func (h *noteHandler) GetAll(c *fiber.Ctx) error {
 	notes, err := h.service.GetAll()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -47,7 +47,7 @@ func (h *NoteHandler) GetAll(c *fiber.Ctx) error {
 }
 
 // GET BY ID
-func (h *NoteHandler) GetByID(c *fiber.Ctx) error {
+func (h *noteHandler) GetByID(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -66,7 +66,7 @@ func (h *NoteHandler) GetByID(c *fiber.Ctx) error {
 }
 
 // UPDATE
-func (h *NoteHandler) Update(c *fiber.Ctx) error {
+func (h *noteHandler) Update(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -92,7 +92,7 @@ func (h *NoteHandler) Update(c *fiber.Ctx) error {
 }
 
 // DELETE
-func (h *NoteHandler) Delete(c *fiber.Ctx) error {
+func (h *noteHandler) Delete(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

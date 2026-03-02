@@ -23,17 +23,21 @@ func main() {
 	noteService := services.NewNoteService(noteRepository) //Memory based note service
 	noteHandler := handlers.NewNoteHandler(noteService)
 
+	// This handler is the check the status of the http server
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
 
+	// Below Handler are for notes CRUD
 	app.Post("/notes", noteHandler.Create)
 	app.Get("/notes", noteHandler.GetAll)
 	app.Get("/notes/:id", noteHandler.GetByID)
 	app.Put("/notes/:id", noteHandler.Update)
 	app.Delete("/notes/:id", noteHandler.Delete)
 
-	taskRepository := repository.NewTaskRepository()
+	// *************************Task Handlers below**************************************
+
+	taskRepository := repository.NewTaskRepository(db.DB)
 	taskService := services.NewTaskService(taskRepository)
 	taskHandler := handlers.NewTaskHandler(taskService)
 	app.Get("/tasks", taskHandler.GetAll)
