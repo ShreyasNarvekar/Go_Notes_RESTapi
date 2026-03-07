@@ -45,7 +45,7 @@ func registerRoutes(app *fiber.App) {
 }
 
 func registerHealthAndStatic(app *fiber.App) {
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
 	app.Static("/", frontendDirPath)
