@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes and Tasks</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .row {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        input,
+        textarea,
+        button {
+            font: inherit;
+            padding: 0.6rem;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+        button {
+            background: #111827;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        ul {
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notes and Tasks</h1>
+        <div class="grid">
+            <section class="card" id="notes">
+                <h2>Notes</h2>
+                <ul id="notes-list"></ul>
+                <div class="row">
+                    <input type="text" id="new-note-title" placeholder="Note title" />
+                    <textarea id="new-note-content" placeholder="Note content"></textarea>
+                    <button onclick="addNote()">Add Note</button>
+                </div>
+            </section>
+
+            <section class="card" id="tasks">
+                <h2>Tasks</h2>
+                <ul id="tasks-list"></ul>
+                <div class="row">
+                    <input type="text" id="new-task-title" placeholder="Task title" />
+                    <textarea id="new-task-description" placeholder="Task description"></textarea>
+                    <button onclick="addTask()">Add Task</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        async function fetchNotes() {
+            const response = await fetch('/notes');
+            const notes = await response.json();
+            const notesList = document.getElementById('notes-list');
+            notesList.innerHTML = '';
+            notes.forEach(note => {
+                const li = document.createElement('li');
+                li.textContent = `${note.title || '(untitled)'}: ${note.content || ''}`;
+                notesList.appendChild(li);
+            });
+        }
+
+        async function addNote() {
+            const title = document.getElementById('new-note-title').value.trim();
+            const content = document.getElementById('new-note-content').value.trim();
+            if (!title && !content) {
+                return;
+            }
+
+            await fetch('/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, content })
+            });
+
+            document.getElementById('new-note-title').value = '';
+            document.getElementById('new-note-content').value = '';
+            await fetchNotes();
+        }
+
+        async function fetchTasks() {
+            const response = await fetch('/tasks');
+            const tasks = await response.json();
+            const tasksList = document.getElementById('tasks-list');
+            tasksList.innerHTML = '';
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = `${task.title || '(untitled)'}: ${task.description || ''}`;
+                tasksList.appendChild(li);
+            });
+        }
+
+        async function addTask() {
+            const title = document.getElementById('new-task-title').value.trim();
+            const description = document.getElementById('new-task-description').value.trim();
+            if (!title && !description) {
+                return;
+            }
+
+            await fetch('/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, description })
+            });
+
+            document.getElementById('new-task-title').value = '';
+            document.getElementById('new-task-description').value = '';
+            await fetchTasks();
+        }
+
+        fetchNotes();
+        fetchTasks();
+    </script>
+</body>
+</html>

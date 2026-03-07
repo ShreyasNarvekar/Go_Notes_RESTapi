@@ -9,3 +9,11 @@ type NoteHandler interface {
 	Update(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 }
+
+type TaskHandler interface {
+	Create(c *fiber.Ctx) error
+	GetAll(c *fiber.Ctx) error
+	GetByID(c *fiber.Ctx) error
+	Update(c *fiber.Ctx) error
+	Delete(c *fiber.Ctx) error
+}

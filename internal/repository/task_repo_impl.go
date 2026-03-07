@@ -16,22 +16,22 @@ func NewTaskRepository(db *gorm.DB) TaskRepository {
 	}
 }
 
-func (tr *taskRepository) Create(task *models.Task) error {
-	return tr.db.Create(task).Error
+func (r *taskRepository) Create(task *models.Task) error {
+	return r.db.Create(task).Error
 }
-func (tr *taskRepository) GetAll() ([]models.Task, error) {
+func (r *taskRepository) GetAll() ([]models.Task, error) {
 	var tasks []models.Task
-	err := tr.db.Find(&tasks).Error
+	err := r.db.Find(&tasks).Error
 	return tasks, err
 }
-func (tr *taskRepository) GetByID(id int) (*models.Task, error) {
+func (r *taskRepository) GetByID(id int) (*models.Task, error) {
 	var task models.Task
-	err := tr.db.First(&task, id).Error
+	err := r.db.First(&task, id).Error
 	return &task, err
 }
-func (tr *taskRepository) Update(task *models.Task) error {
-	return tr.db.Save(task).Error
+func (r *taskRepository) Update(task *models.Task) error {
+	return r.db.Save(task).Error
 }
-func (tr *taskRepository) Delete(id int) error {
-	return tr.db.Delete(id).Error
+func (r *taskRepository) Delete(id int) error {
+	return r.db.Delete(&models.Task{}, id).Error
 }

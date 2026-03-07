@@ -10,7 +10,6 @@ type noteRepo struct {
 	db *gorm.DB
 }
 
-// as per main.go file we are passing the database connection to the repository, so we need to create a constructor function for the note repository that takes the database connection as a parameter and returns a new instance of the note repository. we can do this by adding the following code in the note_repository_impl.go file:
 func NewNoteRepository(db *gorm.DB) NoteRepository {
 	return &noteRepo{
 		db: db,
@@ -41,7 +40,7 @@ func (r *noteRepo) GetByID(id int) (*models.Note, error) {
 
 // Update
 func (r *noteRepo) Update(note *models.Note) error {
-	return r.db.Save(note).Error // we dont need to specify the ID here as GORM will use the primary key from the note struct
+	return r.db.Save(note).Error
 }
 
 // Delete

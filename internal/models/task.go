@@ -10,5 +10,3 @@ type Task struct {
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
-
-//while giving body for creating task, we don't need to provide ID, CreatedAt, UpdatedAt as they will be auto generated

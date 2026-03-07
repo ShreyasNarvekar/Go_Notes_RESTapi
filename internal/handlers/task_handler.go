@@ -7,94 +7,73 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type TaskHandler struct {
+type taskHandler struct {
 	service services.TaskService
 }
 
-func NewTaskHandler(service services.TaskService) *TaskHandler {
-	return &TaskHandler{
+func NewTaskHandler(service services.TaskService) TaskHandler {
+	return &taskHandler{
 		service: service,
 	}
 }
 
-func (th *TaskHandler) Create(c *fiber.Ctx) error {
+func (th *taskHandler) Create(c *fiber.Ctx) error {
 	var task models.Task
 	if err := c.BodyParser(&task); err != nil {
-		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeError(c, fiber.StatusBadRequest, err)
 	}
 	created, err := th.service.Create(task)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeError(c, fiber.StatusBadRequest, err)
 	}
-	return c.JSON(created)
+	return c.Status(fiber.StatusCreated).JSON(created)
 }
 
-func (th *TaskHandler) GetAll(c *fiber.Ctx) error {
+func (th *taskHandler) GetAll(c *fiber.Ctx) error {
 	allTasks, err := th.service.GetAll()
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeError(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(allTasks)
 }
 
-func (th *TaskHandler) GetByID(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+func (th *taskHandler) GetByID(c *fiber.Ctx) error {
+	id, err := parseIDParam(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")
 	}
 	task, err := th.service.GetByID(id)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeError(c, fiber.StatusNotFound, err)
 	}
 	return c.JSON(task)
 }
 
-func (th *TaskHandler) UpdateTask(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+func (th *taskHandler) Update(c *fiber.Ctx) error {
+	id, err := parseIDParam(c)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")
 	}
 	var task models.Task
 	if err = c.BodyParser(&task); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeError(c, fiber.StatusBadRequest, err)
 	}
 	updated, err := th.service.Update(id, task)
 	if err != nil {
-		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeError(c, fiber.StatusNotFound, err)
 	}
 	return c.JSON(updated)
 }
 
-func (th *TaskHandler) Delete(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
+func (th *taskHandler) Delete(c *fiber.Ctx) error {
+	id, err := parseIDParam(c)
 	if err != nil {
-		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")
 	}
-	err = th.service.Delete(id)
-	if err != nil {
-		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+	if err := th.service.Delete(id); err != nil {
+		return writeError(c, fiber.StatusNotFound, err)
 	}
 	return c.JSON(fiber.Map{
-		"message": "Task deleted successfully",
+		"message": "task deleted successfully",
 	})
 }
