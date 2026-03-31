@@ -11,6 +11,15 @@ body {
     margin: 0 auto;
 }
 
+.landing {
+    padding-top: 2rem;
+}
+
+.subtitle {
+    margin-top: -0.5rem;
+    color: #4b5563;
+}
+
 .grid {
     display: grid;
     gap: 1rem;
@@ -22,6 +31,35 @@ body {
     border: 1px solid #e5e7eb;
     border-radius: 10px;
     padding: 1rem;
+}
+
+.list-card {
+    margin-top: 1rem;
+}
+
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.nav-links a,
+.page-link {
+    color: #1d4ed8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.nav-links a:hover,
+.page-link:hover {
+    text-decoration: underline;
 }
 
 .row {
@@ -48,4 +86,37 @@ button {
 
 ul {
     padding-left: 1rem;
+}
+
+.item-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.item-text {
+    overflow-wrap: anywhere;
+}
+
+.item-actions {
+    flex-shrink: 0;
+}
+
+.delete-btn {
+    background: #dc2626;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
 }

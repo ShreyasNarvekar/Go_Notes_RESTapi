@@ -5,6 +5,7 @@ import (
 	"go-notes-service/internal/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 type noteHandler struct {
@@ -17,9 +18,11 @@ func NewNoteHandler(service services.NoteService) NoteHandler {
 
 // CREATE
 func (h *noteHandler) Create(c *fiber.Ctx) error {
+	logrus.Info("Create note endpoint hit")
 	var note models.Note
 
 	if err := c.BodyParser(&note); err != nil {
+		logrus.Errorf("Error parsing request body: %v", err)
 		return writeError(c, fiber.StatusBadRequest, err)
 	}
 
@@ -30,8 +33,8 @@ func (h *noteHandler) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(created)
 }
 
-// GET ALL
 func (h *noteHandler) GetAll(c *fiber.Ctx) error {
+	logrus.Info("Get all notes endpoint hit")
 	notes, err := h.service.GetAll()
 	if err != nil {
 		return writeError(c, fiber.StatusInternalServerError, err)
@@ -41,6 +44,7 @@ func (h *noteHandler) GetAll(c *fiber.Ctx) error {
 
 // GET BY ID
 func (h *noteHandler) GetByID(c *fiber.Ctx) error {
+	logrus.Info("Get note by ID endpoint hit")
 	id, err := parseIDParam(c)
 	if err != nil {
 		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")
@@ -56,6 +60,7 @@ func (h *noteHandler) GetByID(c *fiber.Ctx) error {
 
 // UPDATE
 func (h *noteHandler) Update(c *fiber.Ctx) error {
+	logrus.Info("Update note endpoint hit")
 	id, err := parseIDParam(c)
 	if err != nil {
 		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")
@@ -76,6 +81,7 @@ func (h *noteHandler) Update(c *fiber.Ctx) error {
 
 // DELETE
 func (h *noteHandler) Delete(c *fiber.Ctx) error {
+	logrus.Info("Delete note endpoint hit")
 	id, err := parseIDParam(c)
 	if err != nil {
 		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")

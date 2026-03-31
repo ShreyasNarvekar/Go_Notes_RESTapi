@@ -12,9 +12,9 @@ A Go REST API for managing notes and tasks.
 ## Project Structure
 
 - `cmd/server/main.go`: Application bootstrap and route registration
-- `internal/db`: Database connection setup
-- `internal/models`: Data models (`Note`, `Task`)
-- `internal/repository`: Data access layer
+- `internal/db`: Database connection setup ,calling the connect method in main
+- `internal/models`: Data models (`Note`, `Task`), It has the structre of api
+- `internal/repository`: Data access layer,
 - `internal/services`: Business logic layer
 - `internal/handlers`: HTTP handlers
 - `internal/routes`: Route mapping

@@ -10,6 +10,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -18,12 +19,15 @@ const (
 )
 
 func main() {
-	app := fiber.New()
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	mustConnectDB()
+	defer db.Close()
 	runMigrations()
+	app := fiber.New()
 	registerRoutes(app)
-
-	log.Fatal(app.Listen(serverAddr))
+	if err := app.Listen(serverAddr); err != nil {
+		log.Printf("server stopped with error: %v", err)
+	}
 }
 
 func mustConnectDB() {
@@ -46,6 +50,7 @@ func registerRoutes(app *fiber.App) {
 
 func registerHealthAndStatic(app *fiber.App) {
 	app.Get("/health", func(c *fiber.Ctx) error {
+		logrus.Info("Health check endpoint hit")
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
 	app.Static("/", frontendDirPath)

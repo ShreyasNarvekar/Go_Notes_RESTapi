@@ -18,7 +18,7 @@ func NewNoteService(repo repository.NoteRepository) NoteService {
 
 // Create adds a new note to the repository and returns the created note with its ID
 func (s *noteService) Create(note models.Note) (models.Note, error) {
-
+	//we will write business logic here if needed, for example, we can validate the note data before creating it
 	if err := s.repo.Create(&note); err != nil {
 		return models.Note{}, err
 	}

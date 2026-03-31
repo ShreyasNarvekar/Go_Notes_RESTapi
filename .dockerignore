@@ -1,0 +1,11 @@
+.git
+.gitignore
+.vscode
+.idea
+node_modules
+bin
+out
+dist
+coverage
+*.log
+README*

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes | Go Notes Service</title>
+    <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+    <div class="container">
+        <header class="topbar">
+            <h1>Notes</h1>
+            <nav class="nav-links">
+                <a href="./index.html">Home</a>
+                <a href="./tasks.html">Tasks</a>
+            </nav>
+        </header>
+
+        <section class="card">
+            <h2>Create Note</h2>
+            <div class="row">
+                <input type="text" id="new-note-title" placeholder="Note title" />
+                <textarea id="new-note-content" placeholder="Note content"></textarea>
+                <button id="add-note-btn" type="button">Add Note</button>
+            </div>
+        </section>
+
+        <section class="card list-card">
+            <h2>All Notes</h2>
+            <ul id="notes-list" class="item-list"></ul>
+        </section>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+</html>

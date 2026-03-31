@@ -3,102 +3,65 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Notes and Tasks</title>
+    <title>Go Notes Service</title>
     <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-    <div class="container"> 
-        <h1>Notes and Tasks</h1>
+    <div class="container landing">
+        <h1>Go Notes Service</h1>
+        <p class="subtitle">Choose a page to manage your data.</p>
+
         <div class="grid">
-            <section class="card" id="notes">
+            <section class="card">
                 <h2>Notes</h2>
-                <ul id="notes-list"></ul>
-                <div class="row">
-                    <input type="text" id="new-note-title" placeholder="Note title" />
-                    <textarea id="new-note-content" placeholder="Note content"></textarea>
-                    <button onclick="addNote()">Add Note</button>
-                </div>
+                <p>Create, view, and delete notes.</p>
+                <a class="page-link" href="./notes.html">Open Notes</a>
             </section>
 
-            <section class="card" id="tasks">
+            <section class="card">
                 <h2>Tasks</h2>
-                <ul id="tasks-list"></ul>
-                <div class="row">
-                    <input type="text" id="new-task-title" placeholder="Task title" />
-                    <textarea id="new-task-description" placeholder="Task description"></textarea>
-                    <button onclick="addTask()">Add Task</button>
-                </div>
+                <p>Create, view, and delete tasks.</p>
+                <a class="page-link" href="./tasks.html">Open Tasks</a>
             </section>
         </div>
     </div>
-
-    <script>
-        async function fetchNotes() {
-            const response = await fetch('/notes');
-            const notes = await response.json();
-            const notesList = document.getElementById('notes-list');
-            notesList.innerHTML = '';
-            notes.forEach(note => {
-                const li = document.createElement('li');
-                li.textContent = `${note.title || '(untitled)'}: ${note.content || ''}`;
-                notesList.appendChild(li);
-            });
-        }
-
-        async function addNote() {
-            const title = document.getElementById('new-note-title').value.trim();
-            const content = document.getElementById('new-note-content').value.trim();
-            if (!title && !content) {
-                return;
-            }
-
-            await fetch('/notes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title, content })
-            });
-
-            document.getElementById('new-note-title').value = '';
-            document.getElementById('new-note-content').value = '';
-            await fetchNotes();
-        }
-
-        async function fetchTasks() {
-            const response = await fetch('/tasks');
-            const tasks = await response.json();
-            const tasksList = document.getElementById('tasks-list');
-            tasksList.innerHTML = '';
-            tasks.forEach(task => {
-                const li = document.createElement('li');
-                li.textContent = `${task.title || '(untitled)'}: ${task.description || ''}`;
-                tasksList.appendChild(li);
-            });
-        }
-
-        async function addTask() {
-            const title = document.getElementById('new-task-title').value.trim();
-            const description = document.getElementById('new-task-description').value.trim();
-            if (!title && !description) {
-                return;
-            }
-
-            await fetch('/tasks', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title, description })
-            });
-
-            document.getElementById('new-task-title').value = '';
-            document.getElementById('new-task-description').value = '';
-            await fetchTasks();
-        }
-
-        fetchNotes();
-        fetchTasks();
-    </script>
+    <div class="container">
+        <h1>Div to get Notes and Tasks</h1>
+        <p class="description">Here we are going to display the notes and tasks.</p>
+        <div class="grid">
+            <section class="card"> <!-- like class="card" -->
+                <h2>Notes Data below</h2>
+                
+            </section>
+            <section class="card">
+                <h2>Tasks Data</h2>
+            </section>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>&copy; 2025 Go Notes Service. All rights reserved.</p>
+    </footer>
 </body>
 </html>
+
+
+
+<!-- explain whole html-->
+<!--
+This HTML file serves as the landing page for the Go Notes Service application.
+It provides a simple interface with links to manage notes and tasks.
+
+Structure:
+1. Head Section:
+   - Sets the character encoding to UTF-8.
+   - Sets the viewport for responsive design.
+   - Sets the page title.
+   - Links to an external CSS file for styling.
+
+2. Body Section:
+   - Contains a main container with a landing class.
+   - Displays the main heading and a subtitle.
+   - Contains a grid layout with two cards:
+     a. Notes Card: Provides a link to the notes management page.
+     b. Tasks Card: Provides a link to the tasks management page.
+-->

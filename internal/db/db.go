@@ -14,9 +14,37 @@ var DB *gorm.DB
 
 const (
 	defaultDBType = "postgres"
-	postgresDSN   = "host=localhost user=postgres password=admin dbname=notesdb port=5432 sslmode=disable"
-	mysqlDSN      = "user:password@tcp(localhost:3306)/notesdb?charset=utf8mb4&parseTime=True&loc=Local"
+	defaultDBHost = "localhost"
+	defaultDBName = "notesdb"
 )
+
+func envOrDefault(key, fallback string) string {
+	value := strings.TrimSpace(os.Getenv(key))
+	if value == "" {
+		return fallback
+	}
+	return value
+}
+
+func buildPostgresDSN() string {
+	host := envOrDefault("DB_HOST", defaultDBHost)
+	port := envOrDefault("DB_PORT", "5432")
+	user := envOrDefault("DB_USER", "postgres")
+	password := envOrDefault("DB_PASSWORD", "admin")
+	name := envOrDefault("DB_NAME", defaultDBName)
+
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, name, port)
+}
+
+func buildMySQLDSN() string {
+	host := envOrDefault("DB_HOST", defaultDBHost)
+	port := envOrDefault("DB_PORT", "3306")
+	user := envOrDefault("DB_USER", "user")
+	password := envOrDefault("DB_PASSWORD", "password")
+	name := envOrDefault("DB_NAME", defaultDBName)
+
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, host, port, name)
+}
 
 func Connect() error {
 	dbType := strings.ToLower(strings.TrimSpace(os.Getenv("DB_TYPE")))
@@ -28,9 +56,9 @@ func Connect() error {
 
 	switch dbType {
 	case "postgres":
-		dialector = postgres.Open(postgresDSN)
+		dialector = postgres.Open(buildPostgresDSN())
 	case "mysql":
-		dialector = mysql.Open(mysqlDSN)
+		dialector = mysql.Open(buildMySQLDSN())
 	default:
 		return fmt.Errorf("unsupported database type: %s", dbType)
 	}
@@ -43,4 +71,17 @@ func Connect() error {
 	DB = database
 	fmt.Printf("Database connected using %s\n", dbType)
 	return nil
+}
+
+func Close() {
+	sqlDB, err := DB.DB()
+	if err != nil {
+		fmt.Printf("Error getting database connection: %v\n", err)
+		return
+	}
+	if err := sqlDB.Close(); err != nil {
+		fmt.Printf("Error closing database connection: %v\n", err)
+	} else {
+		fmt.Println("Database connection closed")
+	}
 }
