@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"go-notes-service/internal/models"
 	"go-notes-service/internal/services"
 
@@ -39,13 +40,13 @@ func (h *noteHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return writeError(c, fiber.StatusInternalServerError, err)
 	}
-	return c.JSON(notes)
+	return c.Status(fiber.StatusOK).JSON(notes)
 }
 
 // GET BY ID
 func (h *noteHandler) GetByID(c *fiber.Ctx) error {
 	logrus.Info("Get note by ID endpoint hit")
-	id, err := parseIDParam(c)
+	id, err := c.ParamsInt("id")
 	if err != nil {
 		return writeErrorMessage(c, fiber.StatusBadRequest, "invalid id")
 	}
@@ -54,6 +55,8 @@ func (h *noteHandler) GetByID(c *fiber.Ctx) error {
 	if err != nil {
 		return writeError(c, fiber.StatusNotFound, err)
 	}
+	jsonStr := `{"name":"Shreyas","age":26}`
+	json.NewEncoder(c).Encode(jsonStr)
 
 	return c.JSON(note)
 }
