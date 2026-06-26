@@ -24,7 +24,9 @@ func main() {
 	defer db.Close()
 	runMigrations()
 	app := fiber.New()
-	registerRoutes(app)
+	api := app.Group("/api")
+	v1 := api.Group("/v1")
+	registerRoutes(v1)
 	if err := app.Listen(serverAddr); err != nil {
 		log.Printf("server stopped with error: %v", err)
 	}
@@ -42,13 +44,13 @@ func runMigrations() {
 	}
 }
 
-func registerRoutes(app *fiber.App) {
+func registerRoutes(app fiber.Router) {
 	registerHealthAndStatic(app)
 	registerNoteRoutes(app)
 	registerTaskRoutes(app)
 }
 
-func registerHealthAndStatic(app *fiber.App) {
+func registerHealthAndStatic(app fiber.Router) {
 	app.Get("/health", func(c *fiber.Ctx) error {
 		logrus.Info("Health check endpoint hit")
 		return c.JSON(fiber.Map{"status": "ok"})
@@ -56,14 +58,14 @@ func registerHealthAndStatic(app *fiber.App) {
 	app.Static("/", frontendDirPath)
 }
 
-func registerNoteRoutes(app *fiber.App) {
+func registerNoteRoutes(app fiber.Router) {
 	noteRepository := repository.NewNoteRepository(db.DB)
 	noteService := services.NewNoteService(noteRepository)
 	noteHandler := handlers.NewNoteHandler(noteService)
 	routes.NotesRoutes(app, noteHandler)
 }
 
-func registerTaskRoutes(app *fiber.App) {
+func registerTaskRoutes(app fiber.Router) {
 	taskRepository := repository.NewTaskRepository(db.DB)
 	taskService := services.NewTaskService(taskRepository)
 	taskHandler := handlers.NewTaskHandler(taskService)

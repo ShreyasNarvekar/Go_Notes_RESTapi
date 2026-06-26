@@ -7,7 +7,7 @@ import (
 )
 
 // NotesRoutes defines the routes for note-related operations
-func NotesRoutes(app *fiber.App, noteHandler handlers.NoteHandler) {
+func NotesRoutes(app fiber.Router, noteHandler handlers.NoteHandler) {
 	app.Post("/notes", noteHandler.Create)
 	app.Get("/notes", noteHandler.GetAll)
 	app.Get("/notes/:id", noteHandler.GetByID)
@@ -16,7 +16,7 @@ func NotesRoutes(app *fiber.App, noteHandler handlers.NoteHandler) {
 }
 
 // TasksRoutes defines the routes for task-related operations
-func TasksRoutes(app *fiber.App, taskHandler handlers.TaskHandler) {
+func TasksRoutes(app fiber.Router, taskHandler handlers.TaskHandler) {
 	app.Get("/tasks", taskHandler.GetAll)
 	app.Get("/tasks/:id", taskHandler.GetByID)
 	app.Post("/tasks", taskHandler.Create)
