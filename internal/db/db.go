@@ -7,10 +7,9 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
-
-var DB *gorm.DB
 
 const (
 	defaultDBType = "postgres"
@@ -46,7 +45,7 @@ func buildMySQLDSN() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, host, port, name)
 }
 
-func Connect() error {
+func Connect() (*gorm.DB, error) {
 	dbType := strings.ToLower(strings.TrimSpace(os.Getenv("DB_TYPE")))
 	if dbType == "" {
 		dbType = defaultDBType
@@ -59,24 +58,26 @@ func Connect() error {
 		dialector = postgres.Open(buildPostgresDSN())
 	case "mysql":
 		dialector = mysql.Open(buildMySQLDSN())
+	case "sqlite":
+		dialector = sqlite.Open(":memory:")
+
 	default:
-		return fmt.Errorf("unsupported database type: %s", dbType)
+		return nil, fmt.Errorf("unsupported database type: %s", dbType)
 	}
 
 	database, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
-		return fmt.Errorf("failed to connect to database: %w", err)
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	DB = database
 	fmt.Printf("Database connected using %s\n", dbType)
-	return nil
+	return database, nil
 }
 
-func Close() {
-	sqlDB, err := DB.DB()
+func Close(database *gorm.DB) {
+	sqlDB, err := database.DB()
 	if err != nil {
-		fmt.Printf("Error getting database connection: %v\n", err)
+		fmt.Printf("Error getting database connection while closing the database connection: %v\n", err)
 		return
 	}
 	if err := sqlDB.Close(); err != nil {

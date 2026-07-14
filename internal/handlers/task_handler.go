@@ -34,7 +34,7 @@ func (th *taskHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return writeError(c, fiber.StatusInternalServerError, err)
 	}
-	return c.JSON(allTasks)
+	return c.Status(fiber.StatusOK).JSON(allTasks)
 }
 
 func (th *taskHandler) GetByID(c *fiber.Ctx) error {
