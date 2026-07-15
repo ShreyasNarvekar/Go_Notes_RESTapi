@@ -1,4 +1,4 @@
-package handlers
+package tasks
 
 import (
 	"bytes"
@@ -6,8 +6,6 @@ import (
 	"errors"
 	"net/http/httptest"
 	"testing"
-
-	"go-notes-service/internal/models"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
@@ -19,30 +17,30 @@ type MockTaskService struct {
 	mock.Mock
 }
 
-func (m *MockTaskService) Create(task models.Task) (models.Task, error) {
+func (m *MockTaskService) Create(task Task) (Task, error) {
 	args := m.Called(task)
-	return args.Get(0).(models.Task), args.Error(1)
+	return args.Get(0).(Task), args.Error(1)
 }
 
-func (m *MockTaskService) GetAll() ([]models.Task, error) {
+func (m *MockTaskService) GetAll() ([]Task, error) {
 	args := m.Called()
-	return args.Get(0).([]models.Task), args.Error(1)
+	return args.Get(0).([]Task), args.Error(1)
 }
 
-func (m *MockTaskService) GetByID(id int) (*models.Task, error) {
+func (m *MockTaskService) GetByID(id int) (*Task, error) {
 	args := m.Called(id)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*models.Task), args.Error(1)
+	return args.Get(0).(*Task), args.Error(1)
 }
 
-func (m *MockTaskService) Update(id int, task models.Task) (*models.Task, error) {
+func (m *MockTaskService) Update(id int, task Task) (*Task, error) {
 	args := m.Called(id, task)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*models.Task), args.Error(1)
+	return args.Get(0).(*Task), args.Error(1)
 }
 
 func (m *MockTaskService) Delete(id int) error {
@@ -59,7 +57,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		handler := NewTaskHandler(mockService)
 		app.Post("/tasks", handler.Create)
 
-		task := models.Task{
+		task := Task{
 			Title:       "Test Task",
 			Description: "Test Description",
 			Completed:   false,
@@ -80,7 +78,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, 201, resp.StatusCode)
 
-		var responseTask models.Task
+		var responseTask Task
 		err = json.NewDecoder(resp.Body).Decode(&responseTask)
 		assert.NoError(t, err)
 		assert.Equal(t, expectedTask, responseTask)
@@ -143,13 +141,13 @@ func TestTaskHandler_Create(t *testing.T) {
 		handler := NewTaskHandler(mockService)
 		app.Post("/tasks", handler.Create)
 
-		task := models.Task{
+		task := Task{
 			Title:       "Test Task",
 			Description: "Test Description",
 			Completed:   false,
 		}
 
-		mockService.On("Create", task).Return(models.Task{}, errors.New("database error")).Once()
+		mockService.On("Create", task).Return(Task{}, errors.New("database error")).Once()
 
 		body, _ := json.Marshal(task)
 		req := httptest.NewRequest("POST", "/tasks", bytes.NewReader(body))
@@ -176,7 +174,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		handler := NewTaskHandler(mockService)
 		app.Post("/tasks", handler.Create)
 
-		task := models.Task{
+		task := Task{
 			Description: "Test Description",
 			Completed:   false,
 		}
@@ -194,7 +192,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, 201, resp.StatusCode)
 
-		var responseTask models.Task
+		var responseTask Task
 		err = json.NewDecoder(resp.Body).Decode(&responseTask)
 		assert.NoError(t, err)
 		assert.Equal(t, task, responseTask)
@@ -208,7 +206,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		handler := NewTaskHandler(mockService)
 		app.Post("/tasks", handler.Create)
 
-		task := models.Task{
+		task := Task{
 			Title:       "Complete Task",
 			Description: "A fully detailed task",
 			Completed:   true,
@@ -229,7 +227,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, 201, resp.StatusCode)
 
-		var responseTask models.Task
+		var responseTask Task
 		err = json.NewDecoder(resp.Body).Decode(&responseTask)
 		assert.NoError(t, err)
 		assert.Equal(t, expectedTask, responseTask)
@@ -244,7 +242,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		app.Post("/tasks", handler.Create)
 
 		malformedBody := `{"title": "Test", "description": "Desc", "completed": false, "extra_field": "ignored"}`
-		var task models.Task
+		var task Task
 		json.Unmarshal([]byte(malformedBody), &task) // This should work as extra fields are ignored
 
 		mockService.On("Create", task).Return(task, nil).Once()
@@ -268,7 +266,7 @@ func TestTaskHandler_Create(t *testing.T) {
 		handler := NewTaskHandler(mockService)
 		app.Post("/tasks", handler.Create)
 
-		task := models.Task{
+		task := Task{
 			Title:       string(make([]byte, 1000)), // Large title
 			Description: string(make([]byte, 5000)), // Large description
 			Completed:   false,
@@ -297,7 +295,7 @@ func TestTaskHandler_GetAll(t *testing.T) {
 		handler := NewTaskHandler(mockService)
 		app.Get("/tasks", handler.GetAll)
 
-		tasks := []models.Task{{
+		tasks := []Task{{
 			ID:    1,
 			Title: "Learn Go",
 		}}
@@ -308,7 +306,7 @@ func TestTaskHandler_GetAll(t *testing.T) {
 		assert.NoError(t, err)
 		// will check if the response statuscode is same as expected
 		assert.Equal(t, 200, resp.StatusCode)
-		var response []models.Task
+		var response []Task
 		json.NewDecoder(resp.Body).Decode(&response)
 		assert.Equal(t, tasks, response)
 		// Verify that the mock service methods were called as expected
@@ -321,7 +319,7 @@ func TestTaskHandler_GetAll(t *testing.T) {
 		// taskHandler := NewTaskHandler(mockService)
 		// app.Get("/tasks", taskHandler.GetAll)
 
-		// mockService.On("GetAll").Return([]models.Task{}, errors.New("database error")).Once()
+		// mockService.On("GetAll").Return([]Task{}, errors.New("database error")).Once()
 
 		// req := httptest.NewRequest("GET", "/tasks", nil)
 		// resp, err := app.Test(req)
@@ -340,7 +338,7 @@ func TestTaskHandler_GetAll(t *testing.T) {
 		mockservice := new(MockTaskService)
 		handler := NewTaskHandler(mockservice)
 		app.Get("/tasks", handler.GetAll)
-		mockservice.On("GetAll").Return([]models.Task{}, errors.New("database error")).Once()
+		mockservice.On("GetAll").Return([]Task{}, errors.New("database error")).Once()
 		req := httptest.NewRequest("GET", "/tasks", nil)
 		resp, err := app.Test(req)
 		assert.NoError(t, err)

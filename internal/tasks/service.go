@@ -1,34 +1,40 @@
-package services
+package tasks
 
 import (
-	"go-notes-service/internal/models"
-	"go-notes-service/internal/repository"
 	"time"
 )
 
-type taskService struct {
-	repo repository.TaskRepository
+type TaskService interface {
+	Create(task Task) (Task, error)
+	GetAll() ([]Task, error)
+	GetByID(id int) (*Task, error)
+	Update(id int, task Task) (*Task, error)
+	Delete(id int) error
 }
 
-func NewTaskService(repo repository.TaskRepository) TaskService {
+type taskService struct {
+	repo TaskRepository
+}
+
+func NewTaskService(repo TaskRepository) TaskService {
 	return &taskService{
 		repo: repo,
 	}
 }
 
-func (ts *taskService) Create(task models.Task) (models.Task, error) {
+func (ts *taskService) Create(task Task) (Task, error) {
 	if err := ts.repo.Create(&task); err != nil {
-		return models.Task{}, err
+		return Task{}, err
 	}
 	return task, nil
 }
-func (ts *taskService) GetAll() ([]models.Task, error) {
+func (ts *taskService) GetAll() ([]Task, error) {
 	return ts.repo.GetAll()
 }
-func (ts *taskService) GetByID(id int) (*models.Task, error) {
+func (ts *taskService) GetByID(id int) (*Task, error) {
 	return ts.repo.GetByID(id)
 }
-func (ts *taskService) Update(id int, updated models.Task) (*models.Task, error) {
+func (ts *taskService) Update(id int, updated Task) (*Task, error) {
 	task, err := ts.repo.GetByID(id)
 	if err != nil {
 		return nil, err

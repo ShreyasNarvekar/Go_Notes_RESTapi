@@ -1,13 +1,14 @@
 package routes
 
 import (
-	"go-notes-service/internal/handlers"
+	"go-notes-service/internal/notes"
+	"go-notes-service/internal/tasks"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 // NotesRoutes defines the routes for note-related operations
-func NotesRoutes(app fiber.Router, noteHandler handlers.NoteHandler) {
+func NotesRoutes(app fiber.Router, noteHandler notes.NoteHandler) {
 	app.Post("/notes", noteHandler.Create)
 	app.Get("/notes", noteHandler.GetAll)
 	app.Get("/notes/:id", noteHandler.GetByID)
@@ -16,7 +17,7 @@ func NotesRoutes(app fiber.Router, noteHandler handlers.NoteHandler) {
 }
 
 // TasksRoutes defines the routes for task-related operations
-func TasksRoutes(app fiber.Router, taskHandler handlers.TaskHandler) {
+func TasksRoutes(app fiber.Router, taskHandler tasks.TaskHandler) {
 	app.Get("/tasks", taskHandler.GetAll)
 	app.Get("/tasks/:id", taskHandler.GetByID)
 	app.Post("/tasks", taskHandler.Create)

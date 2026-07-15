@@ -1,10 +1,9 @@
-package handlers
+package notes
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"go-notes-service/internal/models"
 	"net/http/httptest"
 	"testing"
 
@@ -17,21 +16,21 @@ type mockNotesService struct {
 	mock.Mock
 }
 
-func (m *mockNotesService) Create(notes models.Note) (models.Note, error) {
+func (m *mockNotesService) Create(notes Note) (Note, error) {
 	args := m.Called(notes)
-	return args.Get(0).(models.Note), args.Error(1)
+	return args.Get(0).(Note), args.Error(1)
 }
-func (m *mockNotesService) GetAll() ([]models.Note, error) {
+func (m *mockNotesService) GetAll() ([]Note, error) {
 	args := m.Called()
-	return args.Get(0).([]models.Note), args.Error(1)
+	return args.Get(0).([]Note), args.Error(1)
 }
-func (m *mockNotesService) GetByID(id int) (*models.Note, error) {
+func (m *mockNotesService) GetByID(id int) (*Note, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Note), args.Error(1)
+	return args.Get(0).(*Note), args.Error(1)
 }
-func (m *mockNotesService) Update(id int, note models.Note) (*models.Note, error) {
+func (m *mockNotesService) Update(id int, note Note) (*Note, error) {
 	args := m.Called(id)
-	return args.Get(0).(*models.Note), args.Error(1)
+	return args.Get(0).(*Note), args.Error(1)
 }
 func (m *mockNotesService) Delete(id int) error {
 	args := m.Called(id)
@@ -43,7 +42,7 @@ func TestNotesHandlerCreate(t *testing.T) {
 		mockService := new(mockNotesService)
 		handler := NewNoteHandler(mockService)
 		app.Post("/notes", handler.Create)
-		notes := models.Note{
+		notes := Note{
 			Title:   "Test Notes",
 			Content: "Test Description",
 		}
@@ -88,11 +87,11 @@ func TestNotesHandlerCreate(t *testing.T) {
 
 		app.Post("/notes", handler.Create)
 
-		notes := models.Note{
+		notes := Note{
 			Title:   "Test Notes",
 			Content: "Test Description",
 		}
-		mockService.On("Create", notes).Return(models.Note{}, errors.New("database error")).Once()
+		mockService.On("Create", notes).Return(Note{}, errors.New("database error")).Once()
 		body, _ := json.Marshal(notes)
 		req := httptest.NewRequest("Post", "/notes", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")

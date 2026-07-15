@@ -1,10 +1,9 @@
 package bootstrap
 
 import (
-	"go-notes-service/internal/handlers"
-	"go-notes-service/internal/repository"
+	"go-notes-service/internal/notes"
 	"go-notes-service/internal/routes"
-	"go-notes-service/internal/services"
+	"go-notes-service/internal/tasks"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -38,15 +37,15 @@ func registerHealthAndStatic(app fiber.Router) {
 }
 
 func registerNoteRoutes(app fiber.Router, database *gorm.DB) {
-	noteRepository := repository.NewNoteRepository(database)
-	noteService := services.NewNoteService(noteRepository)
-	noteHandler := handlers.NewNoteHandler(noteService)
+	noteRepository := notes.NewNoteRepository(database)
+	noteService := notes.NewNoteService(noteRepository)
+	noteHandler := notes.NewNoteHandler(noteService)
 	routes.NotesRoutes(app, noteHandler)
 }
 
 func registerTaskRoutes(app fiber.Router, database *gorm.DB) {
-	taskRepository := repository.NewTaskRepository(database)
-	taskService := services.NewTaskService(taskRepository)
-	taskHandler := handlers.NewTaskHandler(taskService)
+	taskRepository := tasks.NewTaskRepository(database)
+	taskService := tasks.NewTaskService(taskRepository)
+	taskHandler := tasks.NewTaskHandler(taskService)
 	routes.TasksRoutes(app, taskHandler)
 }
